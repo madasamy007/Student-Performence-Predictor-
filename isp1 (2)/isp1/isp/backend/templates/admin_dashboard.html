@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ username }}!</h2>
+    <p>This is your central control panel for managing intern performance.</p>
+
+    <div class="info-boxes-grid">
+        <a href="{{ url_for('add_student') }}" class="info-box" data-color="cyan">
+            <div class="icon">➕</div>
+            <div class="text">
+                <h3>Add Student</h3>
+                <p>Enroll New Intern</p>
+            </div>
+        </a>
+        <a href="{{ url_for('student_list') }}" class="info-box" data-color="purple">
+            <div class="icon">📊</div>
+            <div class="text">
+                <h3>Total Students</h3>
+                <p>{{ total_students }} Registered</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('attendance') }}" class="info-box" data-color="green">
+            <div class="icon">✅</div>
+            <div class="text">
+                <h3>Attendance</h3>
+                <p>Mark & View Records</p>
+            </div>
+        </a>
+        <a href="{{ url_for('pending_tasks') }}" class="info-box" data-color="red">
+            <div class="icon">⏳</div>
+            <div class="text">
+                <h3>Pending Tasks</h3>
+                <p>{{ pending_tasks }} Tasks Pending</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin_performance_overview') }}" class="info-box" data-color="orange">
+            <div class="icon">📈</div>
+            <div class="text">
+                <h3>Performance Analysis</h3>
+                <p>View Overall Performance</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('add_courses') }}" class="info-box" data-color="blue">
+            <div class="icon">📚</div>
+            <div class="text">
+                <h3>Manage Courses</h3>
+                <p>Add & Edit Courses</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('add_task') }}" class="info-box" data-color="yellow">
+            <div class="icon">📝</div>
+            <div class="text">
+                <h3>Assign Tasks</h3>
+                <p>Create New Tasks</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin_complete_tasks') }}" class="info-box" data-color="indigo"> {# NEW INFO BOX #}
+            <div class="icon">✅</div>
+            <div class="text">
+                <h3>Complete Tasks</h3>
+                <p>Mark & Grade Tasks</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('add_feedback') }}" class="info-box" data-color="pink">
+            <div class="icon">💬</div>
+            <div class="text">
+                <h3>Provide Feedback</h3>
+                <p>Add Intern Feedback</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('add_behaviour_rating') }}" class="info-box" data-color="teal">
+            <div class="icon">⭐</div>
+            <div class="text">
+                <h3>Rate Behaviour</h3>
+                <p>Log Behaviour Ratings</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('admin_view_student_feedback') }}" class="info-box" data-color="gray">
+            <div class="icon">✉️</div>
+            <div class="text">
+                <h3>View Student Feedback</h3>
+                <p>Review messages from interns</p>
+            </div>
+        </a>
+    </div>
+{% endblock %}

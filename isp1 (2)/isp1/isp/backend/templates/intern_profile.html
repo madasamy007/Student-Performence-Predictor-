@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Your Profile{% endblock %}
+
+{% block content %}
+    <h2>Your Profile</h2>
+    <p>View your personal and internship details here.</p>
+
+    <div class="info-section">
+        {% if student_profile %}
+            <p><strong>Student ID:</strong> {{ student_profile.unique_student_id }}</p>
+            <p><strong>Name:</strong> {{ student_profile.name }}</p>
+            <p><strong>Email:</strong> {{ student_profile.email }}</p>
+            <p><strong>Assigned Course:</strong> {{ student_profile.course }}</p>
+            {# Add more profile fields as needed, e.g., contact, emergency info #}
+        {% else %}
+            <p>No profile information available.</p>
+        {% endif %}
+    </div>
+{% endblock %}

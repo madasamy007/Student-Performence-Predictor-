@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Overall Intern Performance{% endblock %}
+
+{% block content %}
+    <h2>Overall Intern Performance</h2>
+    <p>Here's a summary of all interns' performance based on the calculated weighted scores.</p>
+
+    {% if performance_summaries %}
+        <div class="info-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Intern ID</th>
+                        <th>Intern Name</th>
+                        <th>Overall Score</th>
+                        <th>Performance Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in performance_summaries %}
+                        <tr>
+                            <td>{{ student.unique_student_id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.overall_score }}%</td>
+                            <td>{{ student.category }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No intern performance data available yet. Ensure students are added and have sufficient data (attendance, tasks, feedback, behaviour ratings) for calculation.</p>
+    {% endif %}
+{% endblock %}

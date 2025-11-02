@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Pending Tasks{% endblock %}
+
+{% block content %}
+    <h2>Pending Tasks</h2>
+    <p>Here you can view all tasks that are currently pending or incomplete.</p>
+
+    {% if pending_tasks %}
+        <div class="info-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task Title</th>
+                        <th>Assigned To</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in pending_tasks %}
+                        <tr>
+                            <td>{{ task[0] }}</td> {# title #}
+                            <td>{{ task[1] }}</td> {# student_name #}
+                            <td>{{ task[2] }}</td> {# due_date #}
+                            <td>Pending</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Great! No pending tasks at the moment.</p>
+    {% endif %}
+{% endblock %}

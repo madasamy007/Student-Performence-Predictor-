@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}View Student Feedback{% endblock %}
+
+{% block content %}
+    <h2>Feedback from Interns</h2>
+    <p>Here you can review all feedback submitted by interns.</p>
+
+    {% if student_feedback_records %}
+        <div class="info-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>Intern Name (ID)</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in student_feedback_records %}
+                        <tr>
+                            <td>{{ feedback[2] }}</td> {# timestamp #}
+                            <td>{{ feedback[3] }} ({{ feedback[4] }})</td> {# student_name (unique_student_id) #}
+                            <td>{{ feedback[0] }}</td> {# subject #}
+                            <td>{{ feedback[1] }}</td> {# message #}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No feedback from interns has been submitted yet.</p>
+    {% endif %}
+{% endblock %}

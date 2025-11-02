@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Add Courses{% endblock %}
+
+{% block content %}
+    <h2>Add New Course</h2>
+    <p>Use this page to add new courses that interns can be assigned to.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="course_name">Course Name:</label>
+        <input type="text" id="course_name" name="course_name" required placeholder="e.g., Python for Data Science">
+
+        <button type="submit">Add Course</button>
+    </form>
+
+    <div class="info-section" style="margin-top: 30px;">
+        <h3>Existing Courses</h3>
+        {% if existing_courses %}
+            <ul>
+                {% for course in existing_courses %}
+                    <li>{{ course }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No courses added yet.</p>
+        {% endif %}
+    </div>
+{% endblock %}

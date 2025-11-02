@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Add Feedback{% endblock %}
+
+{% block content %}
+    <h2>Provide Intern Feedback</h2>
+    <p>Use this form to provide feedback on an intern's performance, either generally or for a specific task.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="student_id">Select Intern:</label>
+        <select id="student_id" name="student_id" required>
+            <option value="">-- Select an Intern --</option>
+            {% for student in students %}
+                <option value="{{ student[0] }}">{{ student[1] }} ({{ student[0] }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="comments">Comments:</label>
+        <textarea id="comments" name="comments" rows="6" required placeholder="Enter detailed feedback here..."></textarea>
+
+        <label for="feedback_category">Feedback Category:</label>
+        <select id="feedback_category" name="feedback_category" required>
+            <option value="">-- Select Category --</option>
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+            <option value="Average">Average</option>
+            <option value="Poor">Poor</option>
+        </select>
+
+        <label for="task_id">Link to Specific Task (Optional - Task ID):</label>
+        <input type="number" id="task_id" name="task_id" placeholder="Enter Task ID if feedback is for a specific task">
+
+        <button type="submit">Submit Feedback</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Permission{% endblock %}
+
+{% block content %}
+    <h2>Request Leave / View Leave Status</h2>
+    <p>Use this page to request new leave or check the status of your existing leave requests.</p>
+
+    <div class="info-section">
+        <h3>Request New Leave</h3>
+        <form action="#" method="POST"> {# Action can be updated to a Flask route later #}
+            <label for="leave_start_date">Start Date:</label>
+            <input type="date" id="leave_start_date" name="leave_start_date" required>
+
+            <label for="leave_end_date">End Date:</label>
+            <input type="date" id="leave_end_date" name="leave_end_date" required>
+
+            <label for="reason">Reason for Leave:</label>
+            <textarea id="reason" name="reason" rows="4" placeholder="Briefly explain your reason for leave..." required></textarea>
+
+            <button type="submit">Submit Leave Request</button>
+        </form>
+    </div>
+
+    <div class="info-section" style="margin-top: 30px;">
+        <h3>Your Leave Requests</h3>
+        <p>No leave requests found.</p> {# Placeholder for dynamic data #}
+        {# Example structure for displaying leave requests:
+        <table>
+            <thead>
+                <tr>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2025-07-28</td>
+                    <td>2025-07-29</td>
+                    <td>Doctor's Appointment</td>
+                    <td><span class="status-pending">Pending</span></td>
+                </tr>
+            </tbody>
+        </table>
+        #}
+    </div>
+{% endblock %}

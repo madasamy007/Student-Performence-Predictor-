@@ -1,0 +1,230 @@
+{% extends "advanced_base.html" %}
+
+{% block title %}Overall Intern Performance{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2 style="margin-bottom: 0.5rem;">Overall Intern Performance</h2>
+    <p class="text-secondary" style="margin-bottom: 2rem;">A summary of all interns' performance based on their calculated weighted scores.</p>
+
+    {% if performance_summaries %}
+        <!-- Flex container for Table and Charts -->
+        <div class="performance-layout">
+
+            <!-- Table Container -->
+            <div class="table-container">
+                <h3 style="margin-bottom: 1.5rem;">Detailed Scores</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Intern ID</th>
+                            <th>Name</th>
+                            <th>Overall Score</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in performance_summaries %}
+                            <tr>
+                                <td>{{ student.unique_student_id }}</td>
+                                <td>{{ student.name }}</td>
+                                <td><strong>{{ "%.2f"|format(student.overall_score) }}%</strong></td>
+                                <td>
+                                    {% set category_class = 'status-' + student.category|lower %}
+                                    <span class="{{ category_class }}">{{ student.category }}</span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Charts Column Container -->
+            <div class="charts-column">
+                <!-- Bar Chart Container -->
+                <div>
+                     <h3 style="margin-bottom: 1.5rem;">Performance Distribution</h3>
+                    <div class="chart-container card" style="padding: 1.5rem; background: var(--bg-secondary); height: 350px;">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                <!-- Pie Chart Container -->
+                 <div>
+                     <h3 style="margin-bottom: 1.5rem;">Category Breakdown</h3>
+                    <div class="chart-container card" style="padding: 1.5rem; background: var(--bg-secondary); height: 350px; display: flex; justify-content: center; align-items: center;">
+                        <canvas id="categoryPieChart" style="max-width: 300px; max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p>No intern performance data available yet. Ensure students are added and have sufficient data (attendance, tasks, feedback, behaviour ratings) for calculation.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .performance-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        align-items: flex-start;
+    }
+    .table-container {
+        flex: 1.2;
+        min-width: 500px;
+    }
+    .charts-column {
+        flex: 1;
+        min-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 950px) {
+        .table-container, .charts-column {
+            min-width: 100%;
+            flex-basis: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+{% if performance_summaries %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- REGISTER CHART.JS PLUGINS GLOBALLY ---
+    Chart.register(ChartDataLabels);
+
+    // --- COMMON DATA PREPARATION ---
+    const performanceData = {{ performance_summaries|tojson }};
+    const textColor = getComputedStyle(document.body).getPropertyValue('--text-primary');
+    const gridColor = getComputedStyle(document.body).getPropertyValue('--border-color');
+
+    // --- BAR CHART LOGIC ---
+    const barCtx = document.getElementById('performanceChart').getContext('2d');
+    const barLabels = performanceData.map(s => s.name);
+    const barScores = performanceData.map(s => s.overall_score);
+
+    const backgroundColors = barScores.map(score => {
+        if (score >= 90) return 'rgba(81, 207, 102, 0.7)';   // Excellent
+        if (score >= 75) return 'rgba(0, 212, 255, 0.7)';   // Good
+        if (score >= 60) return 'rgba(255, 212, 59, 0.7)';  // Average
+        return 'rgba(255, 107, 107, 0.7)';                 // Poor
+    });
+    const borderColors = barScores.map(score => {
+        if (score >= 90) return '#51cf66';
+        if (score >= 75) return '#00d4ff';
+        if (score >= 60) return '#ffd43b';
+        return '#ff6b6b';
+    });
+    
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: 'Overall Score',
+                data: barScores,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: borderColors,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    beginAtZero: true, max: 100, grid: { color: gridColor },
+                    ticks: { color: textColor, font: { weight: '600' }, callback: (v) => v + '%' }
+                },
+                y: {
+                    grid: { display: false }, ticks: { color: textColor, font: { weight: '600' } }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#0a0f1a', titleColor: '#e2e8f0', bodyColor: '#e2e8f0',
+                    borderColor: 'rgba(59, 130, 246, 0.5)', borderWidth: 1, padding: 12,
+                    cornerRadius: 10, displayColors: false,
+                    callbacks: { label: (c) => `Score: ${c.raw.toFixed(2)}%` }
+                },
+                datalabels: {
+                    color: '#fff', anchor: 'end', align: 'start', offset: -30,
+                    font: { weight: 'bold', size: 14 },
+                    formatter: (v) => v.toFixed(1) + '%',
+                    textShadow: { color: 'rgba(0,0,0,0.5)', offsetX: 1, offsetY: 1, blur: 2 }
+                }
+            }
+        }
+    });
+
+    // --- PIE CHART LOGIC ---
+    const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+    const categoryCounts = { 'Excellent': 0, 'Good': 0, 'Average': 0, 'Poor': 0 };
+    performanceData.forEach(s => { categoryCounts[s.category]++; });
+    
+    const pieChartColors = {
+        'Excellent': 'rgba(81, 207, 102, 0.8)', 'Good': 'rgba(0, 212, 255, 0.8)',
+        'Average': 'rgba(255, 212, 59, 0.8)', 'Poor': 'rgba(255, 107, 107, 0.8)'
+    };
+
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(categoryCounts),
+            datasets: [{
+                label: 'Number of Interns',
+                data: Object.values(categoryCounts),
+                backgroundColor: Object.values(pieChartColors),
+                borderColor: getComputedStyle(document.body).getPropertyValue('--bg-secondary'),
+                borderWidth: 3,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: textColor, padding: 20, font: { weight: '600' } }
+                },
+                tooltip: {
+                    backgroundColor: '#0a0f1a', titleColor: '#e2e8f0', bodyColor: '#e2e8f0',
+                    borderColor: 'rgba(59, 130, 246, 0.5)', borderWidth: 1, padding: 12,
+                    cornerRadius: 10, displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.parsed} intern(s)`;
+                        }
+                    }
+                },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        const sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        const percentage = (value * 100 / sum).toFixed(1) + "%";
+                        return (value > 0 && sum > 0) ? percentage : '';
+                    },
+                    color: '#fff',
+                    font: { weight: 'bold', size: 16 },
+                    textShadow: { color: 'rgba(0,0,0,0.7)', offsetX: 2, offsetY: 2, blur: 4 }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
+

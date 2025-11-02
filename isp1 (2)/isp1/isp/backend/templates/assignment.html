@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Assignment Management{% endblock %}
+
+{% block content %}
+    <h2>Assignment Management</h2>
+    <p>Manage assignment submissions and review intern progress.</p>
+    <!-- Content for Assignment Management -->
+    <div class="info-section">
+        <h3>Pending Submissions</h3>
+        <p>List of assignments submitted by interns for review will appear here.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Intern Name</th>
+                    <th>Task Title</th>
+                    <th>Submission Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Project Report</td>
+                    <td>2025-07-25</td>
+                    <td>Submitted</td>
+                    <td><button>Review</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

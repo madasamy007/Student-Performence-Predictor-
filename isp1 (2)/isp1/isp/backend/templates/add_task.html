@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Add Task{% endblock %}
+
+{% block content %}
+    <h2>Add New Task</h2>
+    <p>Create and assign new tasks to interns.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="assigned_student">Assign To Intern:</label>
+        <select id="assigned_student" name="assigned_to" required> {# Changed name to assigned_to to match Flask request.form #}
+            <option value="">Select Intern</option>
+            {% for student in students %}
+                <option value="{{ student[0] }}">{{ student[1] }} ({{ student[0] }})</option> {# student[0] is unique_student_id, student[1] is name #}
+            {% endfor %}
+        </select>
+
+        <label for="task_title">Task Title:</label>
+        <input type="text" id="task_title" name="task_title" required placeholder="e.g., Complete Flask Authentication">
+
+        <label for="task_description">Description:</label>
+        <textarea id="task_description" name="task_description" rows="6" placeholder="Detailed description of the task"></textarea>
+
+        <label for="due_date">Due Date:</label>
+        <input type="date" id="due_date" name="due_date" required>
+
+        <button type="submit">Assign Task</button>
+    </form>
+{% endblock %}

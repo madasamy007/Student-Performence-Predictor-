@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Student List{% endblock %}
+
+{% block content %}
+    <h2>All Registered Interns</h2>
+    <p>Here you can view a list of all interns currently registered in the system.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if students %}
+        <div class="info-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Assigned Course</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student[0] }}</td> {# unique_student_id #}
+                            <td>{{ student[1] }}</td> {# name #}
+                            <td>{{ student[2] }}</td> {# email #}
+                            <td>{{ student[3] if student[3] else 'N/A' }}</td> {# course_name #}
+                            <td>
+                                <button class="action-button edit-button">Edit</button>
+                                <button class="action-button delete-button">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No students registered yet. <a href="{{ url_for('add_student') }}">Add a new student</a>.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Your Performance Analysis{% endblock %}
+
+{% block content %}
+    <h2>Your Performance Analysis</h2>
+    <p>Here's a detailed breakdown of your overall performance based on key metrics.</p>
+
+    {% if performance_data %}
+        <div class="info-section">
+            <h3>Overall Performance: {{ performance_data.overall_score }}% ({{ performance_data.category }})</h3>
+            <p>This score reflects your performance across various aspects of your internship.</p>
+
+            <div class="progress-container" style="margin-bottom: 30px;">
+                <div class="progress-bar" style="width: {{ performance_data.overall_score }}%;">
+                    {{ performance_data.overall_score }}%
+                </div>
+            </div>
+
+            <h3>Factor-wise Breakdown:</h3>
+            <div class="performance-breakdown">
+                <div class="factor-card">
+                    <h4>Attendance</h4>
+                    <p>Score: {{ performance_data.breakdown.attendance.value }}%</p>
+                    <div class="progress-container small-progress">
+                        <div class="progress-bar" style="width: {{ performance_data.breakdown.attendance.value }}%;"></div>
+                    </div>
+                    <p class="factor-contribution">Contributes {{ (performance_data.breakdown.attendance.weight * 100)|int }}% to overall score.</p>
+                </div>
+
+                <div class="factor-card">
+                    <h4>Average Task Mark</h4>
+                    <p>Score: {{ performance_data.breakdown.task_mark.value }}%</p>
+                    <div class="progress-container small-progress">
+                        <div class="progress-bar" style="width: {{ performance_data.breakdown.task_mark.value }}%;"></div>
+                    </div>
+                    <p class="factor-contribution">Contributes {{ (performance_data.breakdown.task_mark.weight * 100)|int }}% to overall score.</p>
+                </div>
+
+                <div class="factor-card">
+                    <h4>Average Behaviour Rating</h4>
+                    <p>Score: {{ performance_data.breakdown.behaviour.value }}%</p>
+                    <div class="progress-container small-progress">
+                        <div class="progress-bar" style="width: {{ performance_data.breakdown.behaviour.value }}%;"></div>
+                    </div>
+                    <p class="factor-contribution">Contributes {{ (performance_data.breakdown.behaviour.weight * 100)|int }}% to overall score.</p>
+                </div>
+
+                <div class="factor-card">
+                    <h4>Average Admin Feedback</h4>
+                    <p>Score: {{ performance_data.breakdown.feedback.value }}%</p>
+                    <div class="progress-container small-progress">
+                        <div class="progress-bar" style="width: {{ performance_data.breakdown.feedback.value }}%;"></div>
+                    </div>
+                    <p class="factor-contribution">Contributes {{ (performance_data.breakdown.feedback.weight * 100)|int }}% to overall score.</p>
+                </div>
+
+                <div class="factor-card">
+                    <h4>Course Completion</h4>
+                    <p>Score: {{ performance_data.breakdown.course_completion.value }}%</p>
+                    <div class="progress-container small-progress">
+                        <div class="progress-bar" style="width: {{ performance_data.breakdown.course_completion.value }}%;"></div>
+                    </div>
+                    <p class="factor-contribution">Contributes {{ (performance_data.breakdown.course_completion.weight * 100)|int }}% to overall score.</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p>No performance data available yet. Please check back later or ensure your profile has sufficient data points (attendance, tasks, feedback, behaviour ratings, and an assigned course).</p>
+    {% endif %}
+{% endblock %}

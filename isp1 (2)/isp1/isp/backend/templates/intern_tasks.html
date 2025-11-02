@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Your Tasks{% endblock %}
+
+{% block content %}
+    <h2>Your Assigned Tasks</h2>
+    <p>Here you can view the details of all tasks assigned to you.</p>
+
+    {% if tasks %}
+        <div class="info-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task Title</th>
+                        <th>Description</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Mark</th> {# New column for task mark #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task[0] }}</td> {# title #}
+                            <td>{{ task[1] }}</td> {# description #}
+                            <td>{{ task[2] }}</td> {# due_date #}
+                            <td>{{ task[3]|capitalize }}</td> {# status #}
+                            <td>{{ task[4] if task[4] is not none else 'N/A' }}</td> {# mark #}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No tasks assigned to you yet.</p>
+    {% endif %}
+{% endblock %}

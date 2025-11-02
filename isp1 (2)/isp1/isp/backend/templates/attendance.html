@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Management{% endblock %}
+
+{% block content %}
+    <h2>Attendance Records</h2>
+    <p>Mark or view attendance records for all interns.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="info-section">
+        <h3>Daily Attendance for {{ current_date }}</h3>
+        <p>Select a date to view attendance:</p>
+        
+        {# Form to select and view attendance for a specific date #}
+        <form method="GET" action="{{ url_for('attendance') }}" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <label for="attendance_date_picker" class="sr-only">Select Date:</label> {# sr-only for accessibility #}
+            <input type="date" id="attendance_date_picker" name="selected_date" value="{{ current_date }}" class="form-control">
+            <button type="submit" class="action-button">View Attendance</button>
+        </form>
+
+        <table style="margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Intern Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if attendance_records %}
+                    {% for record in attendance_records %}
+                        <tr>
+                            <td>{{ record[1] }}</td> {# unique_student_id #}
+                            <td>{{ record[2] }}</td> {# name #}
+                            <td>
+                                {% if record[3] == 'present' %}
+                                    <span class="status-present">✅ Present</span>
+                                {% elif record[3] == 'absent' %}
+                                    <span class="status-absent">❌ Absent</span>
+                                {% else %}
+                                    <span class="status-not-recorded">Not Recorded</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {# Single form for all actions for a student on a given date #}
+                                <form method="POST" action="{{ url_for('mark_attendance') }}" style="display:inline-block;">
+                                    <input type="hidden" name="student_id" value="{{ record[0] }}"> {# student_db_id #}
+                                    <input type="hidden" name="attendance_date" value="{{ current_date }}">
+                                    
+                                    {% if record[3] == 'present' %}
+                                        <input type="hidden" name="status" value="absent">
+                                        <button type="submit" class="action-button delete-button">Mark Absent</button>
+                                        <input type="hidden" name="status" value="not_recorded"> {# This hidden input will be ignored by the above submit #}
+                                        <button type="submit" class="action-button">Clear Status</button>
+                                    {% elif record[3] == 'absent' %}
+                                        <input type="hidden" name="status" value="present">
+                                        <button type="submit" class="action-button edit-button">Mark Present</button>
+                                        <input type="hidden" name="status" value="not_recorded"> {# This hidden input will be ignored by the above submit #}
+                                        <button type="submit" class="action-button">Clear Status</button>
+                                    {% else %}
+                                        {# If status is not recorded, offer both mark options #}
+                                        <button type="submit" name="status" value="present" class="action-button edit-button">Mark Present</button>
+                                        <button type="submit" name="status" value="absent" class="action-button delete-button">Mark Absent</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">No student records found for this date.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Complete Tasks{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Specific styles for the Complete Tasks page */
+        .data-table th,
+        .data-table td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: #444;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .form-control-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 0.4rem;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .form-control-sm:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+            outline: none;
+        }
+
+        .form-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 1.25rem; /* h-5 */
+            height: 1.25rem; /* w-5 */
+            border: 2px solid #a0aec0; /* Tailwind gray-400 equivalent */
+            border-radius: 0.25rem; /* rounded-md */
+            background-color: #fff;
+            cursor: pointer;
+            vertical-align: middle;
+            position: relative;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .form-checkbox:checked {
+            background-color: #3498db; /* Tailwind blue-600 equivalent */
+            border-color: #3498db;
+        }
+
+        .form-checkbox:checked::after {
+            content: '✔';
+            display: block;
+            color: white;
+            font-size: 0.8rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .form-checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4); /* Focus ring */
+        }
+
+        .btn-primary {
+            background-color: #3498db; /* Blue */
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9; /* Darker blue */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive adjustments for table */
+        @media (max-width: 768px) {
+            .data-table, .data-table tbody, .data-table tr, .data-table td {
+                display: block;
+                width: 100%;
+            }
+            .data-table thead {
+                display: none; /* Hide table headers on small screens */
+            }
+            .data-table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #e0e0e0;
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+            .data-table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+            .data-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 1rem;
+                width: calc(50% - 1rem);
+                padding-right: 1rem;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 600;
+                color: #555;
+            }
+            .data-table td:first-child {
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+            }
+            .data-table td:last-child {
+                border-bottom-left-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+                border-bottom: none;
+            }
+            .form-control-sm.w-24 {
+                width: 100% !important; /* Make mark input full width on small screens */
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-6">Complete Pending Tasks & Assign Marks</h2>
+
+<section class="card mb-6">
+    <h3 class="card-title">Pending Tasks</h3>
+    {% if pending_tasks %}
+    <form method="POST" action="{{ url_for('admin_complete_tasks') }}">
+        <table class="data-table w-full">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Task Title</th>
+                    <th>Description</th>
+                    <th>Due Date</th>
+                    <th>Mark (0-100)</th>
+                    <th>Mark as Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in pending_tasks %}
+                <tr>
+                    <td data-label="Student Name">{{ task[4] }}</td> {# student_name #}
+                    <td data-label="Task Title">{{ task[1] }}</td> {# title #}
+                    <td data-label="Description">{{ task[2] }}</td> {# description #}
+                    <td data-label="Due Date">{{ task[3] }}</td> {# due_date #}
+                    <td data-label="Mark (0-100)">
+                        <input type="number" name="mark_{{ task[0] }}" min="0" max="100" step="0.1" class="form-control-sm rounded-md w-24" value="0">
+                    </td>
+                    <td data-label="Mark as Completed">
+                        <input type="checkbox" name="completed_task_{{ task[0] }}" class="form-checkbox">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-center mt-6">
+            <button type="submit" class="btn btn-primary rounded-md">Update Selected Tasks</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="text-center">No pending tasks to complete.</p>
+    {% endif %}
+</section>
+{% endblock %}
